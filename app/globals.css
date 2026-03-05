@@ -1,0 +1,56 @@
+@import "tailwindcss";
+
+
+/* ============================================
+   THEME CONFIGURATION - ธีมสีฟ้า-น้ำเงิน-เทา-ขาว
+   ============================================ */
+:root {
+  /* สีพื้นหลังหลัก */
+  --background: #ffffff;
+  --foreground: #1e293b;
+
+  /* สีประจำแบรนด์ */
+  --brand-blue: #0e9aef;
+}
+
+/* Dark Mode Theme (ถ้าต้องการ) */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0a0a0a;
+    --foreground: #ededed;
+  }
+}
+
+@layer utilities {
+  .font-kanit {
+    font-family: var(--font-kanit);
+  }
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+/* Custom Scrollbar Utility */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 6px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: #e2e8f0;
+  border-radius: 10px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: var(--brand-blue);
+}
