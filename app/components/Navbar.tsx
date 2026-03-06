@@ -2,8 +2,13 @@
 
 import Link from "next/link";
 import { useState, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import { usePathname } from "next/navigation";
 import FloatingIcons from "./FloatingIcons";
+import LoginModal from "./LoginModal";
+import AIRegistrationModal from "./AIRegistrationModal";
+import { useAuth } from '@/contexts/AuthContext';
+import { LogIn, LogOut, User, ChevronDown, Settings } from 'lucide-react';
 
 const navItems = [
   { label: "คุณสมบัติ", href: "/#features" },
@@ -23,7 +28,11 @@ export default function Navbar() {
   const [open, setOpen] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
+  const [showLoginModal, setShowLoginModal] = useState(false);
+  const [showRegisterModal, setShowRegisterModal] = useState(false);
+  const [showUserMenu, setShowUserMenu] = useState(false);
   const pathname = usePathname();
+  const { user, isAuthenticated, isLoading, logout } = useAuth();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -179,6 +188,74 @@ export default function Navbar() {
                 })}
               </div>
             </div>
+
+            {/* Auth Buttons */}
+            <div className="hidden lg:flex items-center gap-2 ml-2">
+              {isLoading ? (
+                <div className="w-5 h-5 border-2 border-slate-300 border-t-transparent rounded-full animate-spin" />
+              ) : isAuthenticated && user ? (
+                <div className="relative">
+                  <button 
+                    onClick={() => setShowUserMenu(!showUserMenu)}
+                    className={`flex items-center gap-2 px-3 py-1.5 rounded-xl transition-all hover:bg-black/5 ${isTransparent ? 'text-white/90 ring-1 ring-white/20' : 'text-slate-700 bg-slate-50 border border-slate-100'}`}
+                  >
+                    <div className="w-7 h-7 bg-linear-to-tr from-[#0e9aef] to-[#0a82cc] rounded-lg flex items-center justify-center text-white shadow-sm">
+                      <User size={14} />
+                    </div>
+                    <span className="text-sm font-bold font-kanit">
+                      {user.contact_name || user.username}
+                    </span>
+                    <ChevronDown size={14} className={`transition-transform duration-300 ${showUserMenu ? 'rotate-180' : ''}`} />
+                  </button>
+
+                  <AnimatePresence>
+                    {showUserMenu && (
+                      <>
+                        <div 
+                          className="fixed inset-0 z-40" 
+                          onClick={() => setShowUserMenu(false)}
+                        />
+                        <motion.div
+                          initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                          animate={{ opacity: 1, y: 0, scale: 1 }}
+                          exit={{ opacity: 0, y: 10, scale: 0.95 }}
+                          className="absolute right-0 mt-2 w-48 bg-white rounded-2xl shadow-2xl border border-slate-100 overflow-hidden z-50 font-kanit"
+                        >
+                          <div className="p-3 border-b border-slate-50 bg-slate-50/50">
+                            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest px-2">Account</p>
+                            <p className="text-xs text-slate-600 px-2 mt-1 truncate font-medium">{user.email || user.username}</p>
+                          </div>
+                          <div className="p-1">
+                            <button
+                              onClick={() => {
+                                logout();
+                                setShowUserMenu(false);
+                              }}
+                              className="w-full flex items-center gap-2.5 px-3 py-2.5 text-sm text-red-500 hover:bg-red-50 rounded-xl transition-colors group text-left font-bold"
+                            >
+                              <LogOut size={16} className="text-red-300 group-hover:text-red-500" />
+                              <span>ออกจากระบบ</span>
+                            </button>
+                          </div>
+                        </motion.div>
+                      </>
+                    )}
+                  </AnimatePresence>
+                </div>
+              ) : (
+                <button
+                  onClick={() => setShowLoginModal(true)}
+                  className={`text-sm font-bold font-kanit px-4 py-2 rounded-lg transition-all flex items-center gap-1.5 ${
+                    isTransparent
+                      ? 'bg-white/10 backdrop-blur-sm text-white border border-white/20 hover:bg-white/20'
+                      : 'bg-[#0e9aef] text-white shadow-sm hover:bg-[#0c86d1]'
+                  }`}
+                >
+                  <LogIn size={14} />
+                  เข้าสู่ระบบ
+                </button>
+              )}
+            </div>
           </nav>
 
           {/* Mobile button */}
@@ -218,10 +295,64 @@ export default function Navbar() {
                   </Link>
                 );
               })}
+              {isAuthenticated && user ? (
+                <div className="mt-4 pt-4 border-t border-slate-100 px-2">
+                  <div className="flex items-center gap-3 px-2 mb-4">
+                    <div className="w-10 h-10 bg-linear-to-tr from-[#0e9aef] to-[#0a82cc] rounded-xl flex items-center justify-center text-white shadow-md">
+                      <User size={20} />
+                    </div>
+                    <div>
+                      <p className="text-sm font-bold text-slate-800">{user.contact_name || user.username}</p>
+                      <p className="text-[10px] text-slate-500 truncate max-w-[200px]">{user.email || user.username}</p>
+                    </div>
+                  </div>
+                  <button
+                    onClick={() => {
+                      logout();
+                      setOpen(false);
+                    }}
+                    className="w-full flex items-center gap-3 px-4 py-3.5 text-sm font-bold text-red-500 bg-red-50 hover:bg-red-100 rounded-xl transition-all"
+                  >
+                    <LogOut size={18} />
+                    <span>ออกจากระบบ</span>
+                  </button>
+                </div>
+              ) : (
+                <div className="mt-4 pt-4 border-t border-slate-100 flex flex-col gap-2">
+                  <button
+                    onClick={() => {
+                      setShowLoginModal(true);
+                      setOpen(false);
+                    }}
+                    className="w-full py-3 text-sm font-bold text-slate-600 bg-slate-50 rounded-xl flex items-center justify-center gap-2 hover:bg-slate-100 transition-all underline decoration-slate-200"
+                  >
+                    <LogIn size={18} />
+                    เข้าสู่ระบบ
+                  </button>
+                </div>
+              )}
             </nav>
           </div>
         )}
       </div>
+
+      {/* Modals */}
+      <LoginModal
+        isOpen={showLoginModal}
+        onClose={() => setShowLoginModal(false)}
+        onSwitchToRegister={() => {
+          setShowLoginModal(false);
+          setShowRegisterModal(true);
+        }}
+      />
+      <AIRegistrationModal
+        isOpen={showRegisterModal}
+        onClose={() => setShowRegisterModal(false)}
+        onSwitchToLogin={() => {
+          setShowRegisterModal(false);
+          setShowLoginModal(true);
+        }}
+      />
     </header>
   );
 }

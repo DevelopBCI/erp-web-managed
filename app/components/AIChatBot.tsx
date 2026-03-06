@@ -18,6 +18,8 @@ import {
     CircleDollarSign
 } from "lucide-react";
 import AIRegistrationModal from "./AIRegistrationModal";
+import LoginModal from "./LoginModal";
+import { useAuth } from '@/contexts/AuthContext';
 
 interface Message {
     id: string;
@@ -27,11 +29,11 @@ interface Message {
 }
 
 const AIChatBot = () => {
+    const { user, isAuthenticated } = useAuth();
     const [isOpen, setIsOpen] = useState(false);
     const [isMinimized, setIsMinimized] = useState(false);
-    const [isRegistered, setIsRegistered] = useState(false);
     const [showRegisterModal, setShowRegisterModal] = useState(false);
-    const [registrationData, setRegistrationData] = useState({ name: "", email: "", phone: "" });
+    const [showLoginModal, setShowLoginModal] = useState(false);
     const [input, setInput] = useState("");
     const [messages, setMessages] = useState<Message[]>([]);
     const [isTyping, setIsTyping] = useState(false);
@@ -113,30 +115,26 @@ const AIChatBot = () => {
         ]);
     };
 
-    const handleRegisterSuccess = (data: { name: string; contact: string }) => {
-        setIsRegistered(true);
-        setShowRegisterModal(false);
-        setRegistrationData({ name: data.name, email: data.contact, phone: "" });
-
-        // Greeting after registration
-        setMessages((prev) => [
-            ...prev,
-            {
-                id: "reg-success",
-                text: `ยินดีต้อนรับคุณ ${data.name}! ขอบคุณที่ลงทะเบียนครับ ตอนนี้คุณสามารถสอบถามข้อมูลกับผมได้แล้วครับ`,
-                sender: "ai",
-                timestamp: new Date(),
-            }
-        ]);
-    };
-
     return (
         <>
             {/* External Registration Modal */}
             <AIRegistrationModal
                 isOpen={showRegisterModal}
                 onClose={() => setShowRegisterModal(false)}
-                onRegister={handleRegisterSuccess}
+                onSwitchToLogin={() => {
+                    setShowRegisterModal(false);
+                    setShowLoginModal(true);
+                }}
+            />
+
+            {/* Login Modal */}
+            <LoginModal
+                isOpen={showLoginModal}
+                onClose={() => setShowLoginModal(false)}
+                onSwitchToRegister={() => {
+                    setShowLoginModal(false);
+                    setShowRegisterModal(true);
+                }}
             />
 
             <div className="fixed bottom-6 right-6 z-[9999] font-kanit">
@@ -220,28 +218,21 @@ const AIChatBot = () => {
 
                             {!isMinimized && (
                                 <div className="flex-1 flex flex-col overflow-hidden relative">
-                                    {!isRegistered ? (
+                                    {!isAuthenticated ? (
                                         /* Welcome Placeholder in Chat Window */
                                         <div className="absolute inset-0 bg-white/60 backdrop-blur-sm z-20 flex flex-col items-center justify-center p-8 text-center bg-gradient-to-b from-white/10 to-white/90">
                                             <div className="w-16 h-16 bg-[#0e9aef]/10 rounded-[1.5rem] flex items-center justify-center mb-5 animate-pulse">
                                                 <Sparkles size={32} className="text-[#0e9aef]" />
                                             </div>
                                             <h4 className="text-xl font-bold text-slate-800 mb-2">เข้าสู่ระบบการสนทนา</h4>
-                                            <p className="text-sm text-slate-500 mb-8 px-2 leading-relaxed">กรุณากรอกข้อมูลส่วนตัวเพื่อเริ่มต้นการใช้งานผู้ช่วยอัจฉริยะ</p>
+                                            <p className="text-sm text-slate-500 mb-8 px-2 leading-relaxed">กรุณาเข้าสู่ระบบเพื่อเริ่มต้นการใช้งานผู้ช่วยอัจฉริยะ</p>
 
                                             <div className="w-full space-y-4">
                                                 <button
-                                                    onClick={() => setShowRegisterModal(true)}
+                                                    onClick={() => setShowLoginModal(true)}
                                                     className="w-full bg-[#0e9aef] text-white font-bold py-4 rounded-[1.25rem] shadow-[0_8px_20px_rgba(14,154,239,0.25)] hover:bg-[#0c86d1] transition-all active:scale-95 flex items-center justify-center gap-2 group"
                                                 >
-                                                    ลงทะเบียนใช้งาน
-                                                    <motion.div
-                                                        animate={{ y: [0, -4, 0], x: [0, 4, 0] }}
-                                                        transition={{ repeat: Infinity, duration: 1.5 }}
-                                                        className="inline-block"
-                                                    >
-                                                        <Rocket size={18} />
-                                                    </motion.div>
+                                                    <Key size={18} /> เข้าสู่ระบบ
                                                 </button>
 
                                                 <div className="flex items-center gap-3 px-2">
@@ -254,7 +245,7 @@ const AIChatBot = () => {
                                                     onClick={() => setShowRegisterModal(true)}
                                                     className="w-full bg-white text-slate-600 border-2 border-slate-50 font-bold py-3.5 rounded-[1.25rem] hover:bg-slate-50/50 hover:border-[#0e9aef]/10 transition-all active:scale-95 flex items-center justify-center gap-2"
                                                 >
-                                                    <Key size={18} /> เข้าสู่ระบบที่นี่
+                                                    <Rocket size={18} /> สมัครสมาชิกใหม่
                                                 </button>
                                             </div>
                                         </div>
