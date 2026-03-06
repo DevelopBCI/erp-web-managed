@@ -535,7 +535,7 @@ export default function Home() {
                           };
 
                           try {
-                            const res = await fetch("http://localhost/api/messages.php", {
+                            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/messages.php`, {
                               method: "POST",
                               headers: { "Content-Type": "application/json" },
                               body: JSON.stringify(payload)
