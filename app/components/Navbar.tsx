@@ -223,7 +223,7 @@ export default function Navbar() {
                         >
                           <div className="p-3 border-b border-slate-50 bg-slate-50/50">
                             <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest px-2">Account</p>
-                            <p className="text-xs text-slate-600 px-2 mt-1 truncate font-medium">{user.email || user.username}</p>
+                            <p className="text-xs text-slate-600 px-2 mt-1 truncate font-medium">{user.contact_name || user.username}</p>
                           </div>
                           <div className="p-1">
                             <button
@@ -303,7 +303,7 @@ export default function Navbar() {
                     </div>
                     <div>
                       <p className="text-sm font-bold text-slate-800">{user.contact_name || user.username}</p>
-                      <p className="text-[10px] text-slate-500 truncate max-w-[200px]">{user.email || user.username}</p>
+                      <p className="text-[10px] text-slate-500 truncate max-w-[200px]">{user.contact_name || user.username}</p>
                     </div>
                   </div>
                   <button
