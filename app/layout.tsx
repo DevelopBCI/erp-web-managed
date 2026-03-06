@@ -11,6 +11,7 @@ import CookieModal from "./components/CookieModal";
 import CustomCursor from "./components/CustomCursor";
 import AIChatBot from "./components/AIChatBot";
 import Providers from "./components/Providers";
+import PageViewTracker from "./components/PageViewTracker";
 const kanit = Kanit({
   subsets: ["thai", "latin"],
   weight: ["300", "400", "500", "600", "700"],
@@ -31,6 +32,7 @@ export default function RootLayout({
     <html lang="th" className={kanit.variable}>
       <body className="font-kanit flex flex-col min-h-screen" style={{ backgroundColor: "#fff" }}>
         <Providers>
+          <PageViewTracker />
           <CustomCursor />
           <Navbar />
           <PageWrapper>{children}</PageWrapper>
