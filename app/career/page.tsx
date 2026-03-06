@@ -14,8 +14,10 @@ export default function CareerPage() {
         const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/jobs.php`);
         const data = await response.json();
         if (Array.isArray(data)) {
-          // Only show visible jobs on the public career page
-          const visibleJobs = data.filter((job: any) => job.is_visible === 1);
+          // Only show visible jobs on the public career page and sort them
+          const visibleJobs = data
+            .filter((job: any) => Number(job.is_visible) === 1)
+            .sort((a: any, b: any) => Number(a.sort_order || 0) - Number(b.sort_order || 0));
           setCareerData(visibleJobs);
         }
       } catch (error) {

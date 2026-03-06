@@ -64,7 +64,7 @@ export default function CareerCard({ data, index = 0 }: Props) {
         <div className={`relative w-full md:w-1/3 h-64 md:h-auto overflow-hidden flex items-center justify-center p-6 flex-shrink-0 ${isReverse ? "bg-white/10" : "bg-white/60"
           }`}>
           <img
-            src={data.image}
+            src={data.image?.startsWith('http') ? data.image : `${process.env.NEXT_PUBLIC_IMAGE_URL?.replace(/\/+$/, '') || ''}/${data.image?.replace(/^\/+/, '') || ''}`}
             alt={data.title}
             className="max-h-full max-w-full object-contain group-hover:scale-110 transition-transform duration-700"
           />
