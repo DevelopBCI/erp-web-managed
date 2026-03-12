@@ -12,6 +12,7 @@ import CustomCursor from "./components/CustomCursor";
 import AIChatBot from "./components/AIChatBot";
 import Providers from "./components/Providers";
 import PageViewTracker from "./components/PageViewTracker";
+import WelcomePopup from "./components/WelcomePopup";
 const kanit = Kanit({
   subsets: ["thai", "latin"],
   weight: ["300", "400", "500", "600", "700"],
@@ -40,6 +41,7 @@ export default function RootLayout({
           <CookieModal />
           <AIChatBot />
           <Footer />
+          <WelcomePopup />
         </Providers>
       </body>
     </html>
